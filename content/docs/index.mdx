@@ -1,13 +1,80 @@
 ---
-title: Hello World
-description: Your first document
+title: "Introducción a la Arquitectura y Organización de Computadoras II (AMC II)"
+description: "Resumen conceptual de las unidades de estudio, desde la CPU hasta los sistemas de memoria e I/O."
+tags: ["Arquitectura", "Organización", "CPU", "Memoria", "I/O", "Instrucciones"]
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+# 🧠 Introducción a la Arquitectura y Organización de Computadoras II
 
-## What is Next?
+Esta documentación presenta un resumen estructurado de los conceptos fundamentales de **Arquitectura y Organización de Computadoras II (AMC II)**, ofreciendo el marco conceptual para entender cómo se diseñan, implementan y optimizan los sistemas computacionales modernos.
 
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.vercel.app" />
-</Cards>
+---
+
+## 1. Fundamentos y Estructura de la Computadora
+
+El estudio se centra en las interacciones y el diseño interno de una **máquina secuencial de programa almacenado**.
+
+### Conceptos Clave
+* **Arquitectura vs. Organización:** La **Arquitectura** son los atributos visibles al programador (ej. conjunto de instrucciones). La **Organización** es la implementación física y las interconexiones (*hardware*).
+* **Unidades Funcionales:** Toda computadora requiere cinco unidades esenciales: **Órgano de Cálculo (ALU/CPU)**, **Memoria**, **Control**, **Entrada** y **Salida**.
+
+---
+
+## 2. Organización y Diseño del Procesador (CPU)
+
+Se detalla la microarquitectura del procesador y cómo ejecuta las instrucciones.
+
+### Ciclo y Componentes
+* **Ciclo de Instrucción:** Proceso que consta de dos fases principales: **Fetch** (búsqueda) y **Execute** (ejecución).
+* **Datapath:** Camino físico por donde se mueven y transforman los datos.
+* **Unidad de Control (UC):** Encargada de generar las señales de control temporizadas para secuenciar las operaciones.
+
+### Conjunto de Instrucciones (CI)
+* **Propiedades Deseadas:** **Completitud** (puede resolver cualquier problema), **Ortogonalidad** (las instrucciones no se solapan), **Eficiencia**.
+* **Modos de Direccionamiento:** Técnicas para especificar la ubicación de los operandos (Inmediato, Registro, Absoluto, Indirecto, etc.), esenciales para la eficiencia del código.
+
+---
+
+## 3. Unidad de Ejecución y Aritmética
+
+Análisis de la **Unidad Lógico-Aritmética (ALU)** y las técnicas de representación numérica.
+
+### Representación Numérica
+* **Enteros:** La representación estándar es **Complemento a 2** (C2), que simplifica las operaciones de suma y resta.
+* **ALU:** El diseño debe minimizar el retardo del acarreo, resuelto por el **Carry Lookahead Adder (CLA)**.
+* **Algoritmos de Hardware:** Métodos para operaciones complejas, como el algoritmo de **Booth** para multiplicación.
+
+---
+
+## 4. Gestión de Memoria
+
+Exploración de la jerarquía de memoria para optimizar el acceso a los datos.
+
+### Jerarquía de Memoria
+El sistema se organiza por niveles (Registros $\rightarrow$ Caché $\rightarrow$ Memoria Principal $\rightarrow$ Secundaria) para equilibrar **latencia**, **capacidad** y **coste**.
+
+### Memoria Caché
+Explota el **Principio de Localidad** (temporal y espacial).
+* **Parámetros de Diseño:**
+    * **Correspondencia:** Directa, Asociativa por Conjuntos.
+    * **Bloque:** La unidad mínima de transferencia.
+    * **Política de Escritura:** *Writethrough* (escritura directa a memoria) vs. *Writeback* (escritura aplazada).
+
+---
+
+## 5. Sistema de Entrada / Salida (E/S)
+
+Estudio de cómo la computadora interactúa con el mundo exterior.
+
+### Direccionamiento y Sincronización
+* **Mapeo:**
+    * **Integrado (Memory-Mapped I/O):** Utiliza las mismas direcciones de la memoria.
+    * **Separado (Port-Mapped I/O):** Utiliza un espacio de direcciones dedicado.
+* **Mecanismos de Sincronización:**
+    * **Polling:** La CPU verifica repetidamente el estado del dispositivo.
+    * **Interrupciones:** El dispositivo notifica a la CPU cuando necesita servicio.
+    * **DMA (Acceso Directo a Memoria):** Permite la transferencia de datos entre el dispositivo y la memoria sin la intervención de la CPU por cada palabra.
+
+---
+
+> **Conclusión:** Este estudio proporciona el conocimiento esencial para comprender la **materialización del software en hardware** y los compromisos de diseño que optimizan el rendimiento, el costo y la eficiencia energética de los sistemas computacionales.

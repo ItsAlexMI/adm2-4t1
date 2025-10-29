@@ -1,0 +1,101 @@
+---
+title: "Unidad 2: Organización del CPU"
+description: "Estructura interna del procesador, ciclo de instrucción (Fetch/Execute), Datapath y Unidades de Control, y arquitecturas de tratamiento de operandos."
+tags: ["CPU", "Ciclo de Instrucción", "Registros", "Datapath", "Unidad de Control", "Arquitecturas de Operandos"]
+---
+
+# Unidad 2: 🧠 Organización del CPU
+
+## Sinopsis Breve
+
+Esta unidad desarrolla la organización interna del procesador: el **ciclo de instrucción** (*fetch/execute*), los **elementos constructivos** del CPU (registros, buses, ALU, *flags*, unidad de control), la separación lógica entre **datapath** y **control**, y las **arquitecturas de tratamiento de operandos** (acumulador, pila, registros con 2 y 3 direcciones). El contenido es fundamental para diseñar y analizar microarquitecturas y relacionar instrucciones con elementos físicos del CPU.
+
+---
+
+## Objetivos de Aprendizaje
+
+1.  Identificar y explicar las fases del **ciclo de instrucción** y las subetapas de *fetch* y *execute*.
+2.  Enumerar y describir los **elementos *hardware*** necesarios para construir un CPU funcional.
+3.  Relacionar cada actividad del ciclo de instrucción con los **registros** y **buses** que intervienen.
+4.  Diferenciar **datapath** y **unidad de control** y su papel en la ejecución de instrucciones.
+5.  Comparar y evaluar **arquitecturas de operandos**: acumulador, pila y registros (2 y 3 direcciones).
+6.  Diseñar el flujo básico de una instrucción simple (*fetch* → *decode* → *execute* → *writeback*) usando MAR, MDR, PC, IR, ALU y registros.
+
+---
+
+## Desarrollo Temático
+
+### Ciclo de Instrucción y sus Fases
+
+El ciclo de instrucción es el proceso fundamental que el CPU repite continuamente:
+
+1.  **Fase Fetch (Búsqueda):**
+    * Cargar la dirección de la instrucción desde el **PC** al **MAR**.
+    * Leer la instrucción desde memoria al **MDR** y transferirla al **IR** para decodificación.
+    * **Incrementar el PC** para apuntar a la siguiente instrucción.
+2.  **Fase Execute (Ejecución):**
+    * Decodificar la instrucción contenida en el **IR**.
+    * Cargar operandos (desde registros o memoria).
+    * Ejecutar la operación en la **ALU**.
+    * Almacenar el resultado en registro o memoria (*writeback*).
+    * Verificar solicitudes de **interrupción** al finalizar la instrucción.
+
+### Elementos Básicos para Construir el CPU
+
+| Elemento | Propósito |
+| :--- | :--- |
+| **PC** (*Program Counter*) | Contiene la dirección de la **próxima** instrucción a buscar. |
+| **IR** (*Instruction Register*) | Contiene la **instrucción actual** en decodificación y ejecución. |
+| **MAR** (*Memory Address Register*) | Almacena la **dirección** de memoria a leer o escribir. |
+| **MDR** (*Memory Data Register*) | Almacena el **dato** (instrucción u operando) leído o escrito desde/a memoria. |
+| **Registros de Propósito General** | Almacenamiento rápido de datos y resultados intermedios (R0..Rn). |
+| **ALU** (*Arithmetic Logic Unit*) | Órgano de cálculo para operaciones aritméticas y lógicas. |
+| **PSW** (*Processor Status Word*) | **Registro de Estado** que contiene *FLAGS* (Z, N/S, C, V) actualizados por la ALU. |
+| **Buses** | Vías físicas para transferencia de datos, direcciones y señales de control. |
+
+### Interacción Memoria-CPU y Transferencia
+
+La **secuencia típica** de transferencia involucra al PC, MAR, MDR e IR, coordinados por la Unidad de Control. La ALU y los registros internos se utilizan para operaciones rápidas, evitando accesos a memoria (más lentos) siempre que sea posible.
+
+* **Estados y Efectos Colaterales:** La ejecución de instrucciones afecta el **estado de la máquina**, principalmente a través de la actualización del **PSW/FLAGS**.
+* **Interrupciones:** Una señal **INT** (por periféricos) detiene temporalmente la ejecución secuencial. El CPU debe guardar el **contexto** (estado) actual y ejecutar una rutina de servicio (**ISR**).
+
+### Datapath y Control
+
+Estos dos componentes forman la separación lógica clave de la microarquitectura:
+
+* **Datapath:** El **camino de datos**. Compuesto por el conjunto de registros, buses, y la ALU que físicamente **transportan y transforman** los datos. 
+* **Unidad de Control:** La **lógica de control**. Genera las **señales de control** secuenciales (microinstrucciones o lógica cableada) para dirigir las operaciones del Datapath.
+
+### Arquitecturas del Procesador según Tratamiento de Operandos
+
+Define cómo las instrucciones especifican la ubicación de los operandos.
+
+| Arquitectura | Direcciones | Operación Típica | Ventajas/Desventajas |
+| :--- | :--- | :--- | :--- |
+| **Acumulador** | 1 dirección | `ADD X` (Acumulador $\leftarrow$ Acumulador + Memoria[X]) | Simplicidad de instrucción, pero mayor tráfico a memoria. |
+| **Pila (*Stack*)** | 0 direcciones | `ADD` (TOS $\leftarrow$ NOS + TOS) | Códigos compactos, fácil manejo de expresiones anidadas; requiere **SP** (*Stack Pointer*). |
+| **Registros (2 Dir.)** | 2 direcciones | `ADD R1, R2` (R1 $\leftarrow$ R1 + R2) | Uso eficiente de registros, pero escritura **destructiva** (R1 se sobrescribe). |
+| **Registros (3 Dir.)** | 3 direcciones | `ADD R1, R2, R3` (R1 $\leftarrow$ R2 + R3) | Facilita la **compilación** y el **paralelismo**; instrucciones más largas. |
+
+---
+
+## Conceptos y Definiciones Clave
+
+| Concepto | Definición |
+| :--- | :--- |
+| **PC** | **Contador de Programa** que apunta a la próxima instrucción. |
+| **IR** | **Registro de Instrucción** que contiene la instrucción en decodificación. |
+| **MAR / MDR** | Registros de **Dirección** y **Datos** para la interfaz con la memoria. |
+| **ALU** | Unidad aritmético-lógica que realiza operaciones. |
+| **PSW** | **Registro de Estado** con *FLAGS* (Z, N, C, V) que reflejan el resultado de la última operación. |
+| **Datapath** | Elementos físicos que mueven y transforman datos. |
+| **Unidad de Control** | Genera señales de control para cada ciclo microarquitectural. |
+| **TOS / NOS** | *Top of Stack* y *Next on Stack* en arquitectura de pila. |
+| **SP** | **Puntero de Pila** que controla la dinámica de la pila. |
+
+---
+
+## Conclusión
+
+La organización del CPU articula cómo la arquitectura se materializa en *hardware* funcional. Comprender el ciclo de instrucción y los elementos constructivos permite diseñar, optimizar y analizar **microarquitecturas**, y elegir el **modelo de operandos** adecuado según criterios de simplicidad, rendimiento y facilidad de compilación. Esta unidad es la base para comprender *pipelining*, paralelismo y optimizaciones posteriores en el curso.

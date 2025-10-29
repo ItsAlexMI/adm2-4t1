@@ -1,0 +1,87 @@
+---
+title: "Unidad 1: Introducción a la Arquitectura y Organización de la Computadora"
+description: "Breve sinopsis y fundamentos sobre la máquina de programa almacenado, la distinción entre arquitectura y organización, y las unidades funcionales esenciales."
+tags: ["Arquitectura", "Organización", "Fundamentos", "Von Neumann"]
+---
+
+# Unidad 1: 🖥️ Introducción a la Arquitectura y Organización de la Computadora
+
+## Sinopsis Breve
+
+Esta unidad introduce las distinciones fundamentales entre **arquitectura y organización de computadoras**, presenta la idea central de la **máquina secuencial de programa almacenado**, y describe dos enfoques complementarios para organizar un sistema: el **funcional** y el **estructural**. Proporciona el marco conceptual necesario para entender cómo se planifica, diseña e implementa una computadora y cuáles son sus unidades funcionales básicas.
+
+---
+
+## Objetivos de Aprendizaje
+
+Al finalizar esta unidad, se espera que el estudiante pueda:
+
+1.  Comprender la diferencia entre **arquitectura** (atributos visibles al programador) y **organización** (implementación y conexiones físicas).
+2.  Explicar qué es una **máquina de programa almacenado** y por qué es la base de las computadoras modernas.
+3.  Identificar las **cinco unidades funcionales** necesarias para implementar una máquina secuencial.
+4.  Diferenciar entre el **enfoque funcional** y el **enfoque estructural** en la organización de sistemas computacionales.
+5.  Relacionar las funciones básicas (procesamiento, almacenamiento, traslado y control) con los componentes físicos (CPU, memoria, E/S).
+
+---
+
+## Desarrollo Temático (Núcleo)
+
+### Vistas Generales y Proceso Constructivo
+
+El diseño de una computadora se articula en tres fases principales: **planificación → diseño → implementación**.
+
+* **Planificación:** Define objetivos, requisitos y el *set* de especificaciones.
+* **Diseño:** Especifica la **arquitectura** (el *qué*) y la **organización** (el *cómo*).
+* **Implementación:** Materializa los componentes y sus interconexiones (*hardware*).
+
+### Arquitectura vs. Organización
+
+Esta es la distinción fundacional del curso:
+
+| Perspectiva | Arquitectura (Atributos) | Organización (Implementación) |
+| :--- | :--- | :--- |
+| **Definición** | Atributos visibles al programador. | Cómo se implementan esos atributos físicamente. |
+| **Ejemplos** | Conjunto de instrucciones, formatos de datos, modos de direccionamiento, modelo de ejecución. | Tipos de *hardware* interno, estructura de buses, interconexiones, técnicas de optimización (caché, *pipelines*). |
+| **Impacto** | Afecta cómo se escribe y ejecuta el *software*. | Afecta rendimiento, costo y confiabilidad del sistema. |
+
+### Máquina Secuencial de Programa Almacenado
+
+El **concepto central** de las computadoras modernas, también conocido como **Arquitectura Von Neumann**.
+
+* **Principio:** El **programa** y los **datos** residen en la misma memoria principal.
+* **Ejecución:** La máquina ejecuta una secuencia de instrucciones desde la memoria, dirigida por una **Unidad de Control** (secuenciador).
+* **Ventaja:** Proporciona **flexibilidad** para cambiar programas sin modificar el *hardware* y es esencial para la programación compleja y la carga dinámica de instrucciones.
+
+### Unidades Funcionales Esenciales (Modelo Babbage/Von Neumann)
+
+Para implementar una máquina secuencial, se requieren cinco unidades funcionales que trabajan en conjunto:
+
+1.  **Órgano de Cálculo (ALU / CPU):** Realiza operaciones aritméticas y lógicas.
+2.  **Memoria:** Almacena instrucciones y datos.
+3.  **Control:** Secuencia las instrucciones y gestiona las señales internas.
+4.  **Unidades de Entrada (E):** Permiten la entrada de datos y programas desde el exterior.
+5.  **Unidades de Salida (S):** Entregan resultados al usuario o a otros sistemas.
+
+
+### Enfoques de Organización
+
+Existen dos enfoques complementarios para la organización de sistemas:
+
+* **Funcional:** Se centra en las **operaciones requeridas** por el sistema: procesamiento de datos, almacenamiento, traslado y control. Útil para analizar requisitos.
+* **Estructural:** Se centra en los **componentes físicos** y sus interconexiones: CPU, memoria, E/S. Es la base para la ingeniería de *hardware*.
+
+---
+
+## Conceptos y Definiciones Clave
+
+| Concepto | Definición |
+| :--- | :--- |
+| **Arquitectura de Computadoras** | Atributos visibles al programador que definen el comportamiento del sistema. |
+| **Organización de Computadoras** | Implementación física y lógica de los componentes. |
+| **Máquina de Programa Almacenado** | Sistema que guarda programas y datos en la misma memoria y ejecuta instrucciones secuencialmente. |
+| **Secuenciador / Control** | Unidad que dirige la ejecución de instrucciones. |
+| **Órgano de Cálculo (ALU)** | Módulo que realiza operaciones aritméticas y lógicas. |
+| **Enfoque Funcional** | Vista centrada en las funciones que debe realizar el sistema. |
+| **Enfoque Estructural** | Vista centrada en los componentes y conexiones físicas. |
+| **Memoria** | Lugar de almacenamiento de instrucciones y datos. |
+| **Entrada/Salida (E/S)** | Mecanismos para comunicar la computadora con el exterior. |
