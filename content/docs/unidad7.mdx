@@ -1,0 +1,117 @@
+---
+title: "Unidad 7: Sistema de Entrada / Salida"
+description: "Dispositivos de E/S, arquitectura de buses, direccionamiento, interrupciones, DMA y estándares de interfaz."
+---
+
+## Breve sinopsis
+Esta unidad cubre la función de transferencia externa de un computador: dispositivos de entrada y salida, arquitectura de buses, módulos y puertos de E/S, técnicas de direccionamiento de dispositivos (mapeo integrado y mapeo separado), métodos de sincronización (polling, interrupciones), arbitraje e identificación de interrupciones, transferencia eficiente de datos (DMA, canales/IOP) y estándares físicos y lógicos de interfaces (paralelas y seriales).  
+Se proporcionan criterios de diseño, ejemplos prácticos (PIC 8259, Intel 8237), y recomendaciones para elegir técnicas de E/S según rendimiento, complejidad y coherencia.
+
+---
+
+## Objetivos de aprendizaje
+- Definir la función de E/S y distinguir unidad de entrada, unidad de salida y módulos de E/S.  
+- Explicar la arquitectura de interconexión (bus del sistema y buses de expansión) y sus parámetros de diseño (anchura, sincronía, arbitraje).  
+- Comparar direccionamiento mapeado a memoria vs espacio de puertos I/O separado y sus implicaciones en ISA y software.  
+- Describir mecanismos de sincronización entre CPU y dispositivos: polling, interrupciones y DMA; indicar ventajas y limitaciones.  
+- Entender arbitraje e identificación de interrupciones, prioridades y vectores de interrupción (ejemplo PIC 8259 y tabla de IRQ).  
+- Comparar modos de transferencia DMA y arquitecturas de canales/IOP; seleccionar según rendimiento y complejidad.  
+- Identificar interfaces físicas comunes (ISA, PCI/PCIe, USB, RS 232, IEEE 1394) y diferenciar buses seriales y paralelos.  
+
+---
+
+## Desarrollo temático
+
+### Función y estructura general de E/S
+- La función de E/S realiza la transferencia de datos entre el mundo exterior (dispositivos) y el computador.  
+- Componentes funcionales: Unidad de Entrada (captura datos/programas), Unidad de Salida (presenta resultados), módulos de E/S (puerto/interfaz), controladores y, opcionalmente, procesadores de E/S.  
+- El módulo de E/S gestiona direccionamiento, transferencia de datos, lógica de control e información de estado; se accede mediante registros de datos y registros de estado/control.  
+
+---
+
+### Arquitectura de buses y diseño
+- Estructura: El bus del sistema conecta CPU–Memoria–Puente E/S; los buses de expansión conectan periféricos mediante controladores puente.  
+- Parámetros de diseño: transmisión serial vs paralela; líneas dedicadas vs multiplexadas; sincronía (síncrono con reloj) vs asíncrono (handshaking); ancho del bus; velocidad máxima; tipo de transacción (lectura/escritura, ráfaga, por palabra o por bloque).  
+- Ejemplos históricos y actuales: ISA (8/16 bits), PCI/PCIe (paralelo/serial y lanes), USB, FireWire, eSATA.  
+
+---
+
+### Direccionamiento de dispositivos
+- **Mapeo integrado (Memory Mapped I/O):** los dispositivos ocupan direcciones en el espacio de memoria; se usan las mismas instrucciones de acceso (LOAD/STORE).  
+  - *Ventajas:* uniformidad, facilidad de direccionamiento.  
+  - *Desventajas:* reduce espacio de direcciones y exige coherencia.  
+- **Mapeo separado (Port Mapped I/O):** espacio de direcciones distinto; instrucciones especiales (IN/OUT).  
+  - *Ventajas:* espacio dedicado a E/S.  
+  - *Desventajas:* requiere instrucciones y soporte específico en hardware y compilador.  
+- El diseño de la ISA debe contemplar soporte y mecanismos para ambos enfoques según los requisitos.  
+
+---
+
+### Técnicas de comunicación y sincronización
+- **Polling:** la CPU lee periódicamente registros de estado del dispositivo para detectar disponibilidad. Simple, pero costoso en uso de CPU.  
+- **Interrupciones:** el dispositivo solicita servicio asíncronamente; la CPU interrumpe su flujo, atiende la rutina ISR (Interrupt Service Routine).  
+  - *Ventajas:* eficiente en CPU.  
+  - *Requisitos:* controlador de interrupciones y políticas de prioridad.  
+- **DMA (Direct Memory Access):** el controlador DMA transfiere bloques memoria ↔ dispositivo tomando el bus; libera la CPU de transferencias repetitivas.  
+  - Requiere arbitraje de bus (HOLD/HLDA) y mecanismos de coherencia.  
+- **Canales / IOP (I/O Processors):** evolución del DMA que incorpora procesadores dedicados y memoria local para orquestar múltiples transferencias complejas, liberando aún más a la CPU.  
+
+---
+
+### Interrupciones: arbitraje, identificación y prioridades
+- El CPU dispone normalmente de una línea **INT** que indica solicitud; un árbitro (controlador de interrupciones) serializa y prioriza múltiples solicitudes.  
+- **Tipos:** síncronas (excepciones o errores) y asíncronas (hardware o periféricos).  
+- **Métodos de selección:** árbitro paralelo (líneas IRQ) o serial; prioridades asignadas por hardware o configurables.  
+- **Identificación:** vectores de interrupción (punteros a ISR) o esquema de polling por el controlador.  
+  - Ejemplo clásico: PIC Intel 8259A con IRQ0..IRQ7 y vectores asociados (tabla de la PC).  
+- **Habilitación / enmascaramiento:** la CPU puede habilitar o inhabilitar interrupciones globalmente o por máscara; algunas interrupciones son no enmascarables (NMI).  
+
+---
+
+### DMA y modos de transferencia
+- **Configuración:** la CPU escribe registros de dirección, conteo y modo en el DMAC; luego el DMAC realiza la transferencia y notifica **EOT (End Of Transfer)**.  
+- **Modos:**
+  - *Burst:* ráfaga continua.  
+  - *Cycle stealing:* el DMAC toma ciclos individuales robando breves intervalos al CPU.  
+  - *Demand, memory-to-memory, I/O to memory,* etc.  
+- **Ejemplo:** Intel 8237 DMAC.  
+  - Secuencia típica: petición DMA → línea BR → CPU concede BG/HLDA → DMAC realiza transferencias y decrementa contador → al llegar a 0 genera interrupción EOT.  
+- **Arbitraje:** múltiples DMAC o dispositivos pueden requerir bus mastering; se necesita un esquema de arbitraje para manejar concurrencia.  
+
+---
+
+### Canales y procesadores de E/S
+- **Canales selector:** optimizados para dispositivos de alta velocidad con bloques grandes (uno a la vez).  
+- **Canales multiplexor:** sirven muchos dispositivos de baja/media velocidad en *round robin*, con modos *byte stealing* o *burst* según quantum.  
+- **I/O Processors (IOP):** permiten *offload* completo de la lógica de transferencia, ejecución de comandos complejos y menor latencia en la CPU.  
+
+---
+
+### Protocolos y estándares de interfaz
+- **Interfaces paralelas:** transfieren *n* bits simultáneamente (ej. Centronics para impresoras).  
+  - *Ventajas:* mayor ancho por ciclo.  
+  - *Desventajas:* ruido, limitación de distancia y velocidad por capacitancias.  
+- **Interfaces seriales:** USB, RS 232, FireWire, PCIe.  
+  - Menos líneas físicas, mejor desempeño en distancia, protocolos complejos (enumeración, plug & play, administración de energía).  
+- La selección del tipo depende de los requisitos de ancho de banda, distancia y costo.  
+
+---
+
+### Conceptos y definiciones clave
+- **Puerto:** registro o conjunto de registros que exponen datos/estado/control del dispositivo.  
+- **Polling:** sondeo periódico del estado del dispositivo por la CPU.  
+- **ISR:** rutina de servicio de interrupción que atiende la petición del dispositivo.  
+- **IRQ / Vector de interrupción:** identificador del dispositivo y puntero a su ISR.  
+- **DMA:** transferencia directa entre dispositivo y memoria sin intervención constante de la CPU.  
+- **Bus mastering:** capacidad de un dispositivo/controlador para arbitrar el bus y transferir sin intervención de la CPU.  
+- **NMI:** interrupción no enmascarable usada para eventos críticos.  
+- **PIC:** *Programmable Interrupt Controller* (ej. 8259A).  
+- **IOP / Canal:** procesador o canal dedicado a E/S.  
+
+---
+
+## Conclusión
+Un diseño de E/S sólido es crítico para el rendimiento global del sistema.  
+Permite mover datos eficientemente, liberar a la CPU de trabajo repetitivo y garantizar que los periféricos concurrentes sean atendidos con prioridad y coherencia.  
+La combinación adecuada de direccionamiento, mecanismos de sincronización (interrupciones y DMA), arquitectura de buses y políticas de arbitraje produce un sistema flexible y escalable.  
+Para un enfoque práctico, acompaña la teoría con diagramas de interconexión CPU–Memoria–DMA–Periféricos, ejemplos de código para ISR y ejercicios configurando DMAC y PIC.

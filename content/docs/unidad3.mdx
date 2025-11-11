@@ -1,0 +1,80 @@
+---
+title: "Unidad 3: Diseño del Conjunto de Instrucciones (CI)"
+description: "Análisis del Conjunto de Instrucciones (CI), sus propiedades, formatos de codificación (fijo, extendido, Huffman) y modos de direccionamiento clave."
+tags: ["Arquitectura", "Instrucciones", "CPU", "Modos Direccionamiento", "Codificación"]
+---
+
+# 📖 Unidad 3: Diseño del Conjunto de Instrucciones (CI)
+
+## 📌 Sinopsis y Objetivos
+
+Esta unidad aborda el **Conjunto de Instrucciones (CI)** como el atributo central de la arquitectura. Cubriremos sus propiedades de diseño, la estructura interna de una instrucción (CO y direccionamiento), las técnicas para codificar el CO (fijo, extendido y Huffman), y una clasificación detallada de los **modos de direccionamiento (MDA)**.
+
+---
+
+### 🎯 Objetivos Clave
+
+* Definir el **Conjunto de Instrucciones** y justificar su importancia.
+* Identificar las propiedades deseables: **Completitud**, **Ortogonalidad** y **Eficiencia**.
+* Comparar las técnicas de **Codificación del CO**.
+* Explicar los principales **Modos de Direccionamiento** (MDA).
+
+---
+
+## 🚀 Desarrollo Temático
+
+### 1. El Conjunto de Instrucciones (CI)
+
+El CI es el **repertorio completo** de instrucciones que el procesador entiende. Es el **principal atributo de la arquitectura**, definiendo la interfaz entre software y hardware.
+
+#### Características Deseables
+
+1.  **Completitud:** Soporta todas las operaciones que el hardware puede ejecutar.
+2.  **Ortogonalidad:** Operaciones y tipos de operandos deben combinarse sin restricciones arbitrarias.
+3.  **Eficiencia:** Ausencia de redundancias y buen uso de los bits disponibles.
+
+### 2. Estructura y Formato
+
+Una instrucción se divide en: **Código de Operación (CO)**, que define la acción, y el **Bloque de Direccionamiento**, que localiza los operandos.
+
+| Formato | Descripción | Ventajas | Desventajas |
+| :--- | :--- | :--- | :--- |
+| **Fijo** | Todas las instrucciones tienen el mismo tamaño. | Decodificación simple. | Desperdicio de bits. |
+| **Variable** | El tamaño varía según la instrucción. | Ahorro de memoria. | Decodificación y fetch más complejos. |
+
+---
+
+### 3. Codificación del Código de Operación (CO)
+
+La codificación afecta el número de instrucciones ($i$) y la complejidad del hardware.
+
+* **Bloque Fijo:** Se reservan bits uniformemente. La longitud **L_CO** se calcula como: **L_CO = Techo(log2(i))**. Simple de decodificar.
+* **Bloque Extendido:** Utiliza bits libres en los campos de operando para *extender* el CO, aumentando el repertorio sin cambiar el ancho de la instrucción.
+* **Huffman (Codificación por Frecuencias):** Asigna códigos más **cortos a instrucciones más frecuentes**. Ofrece la **máxima eficiencia** en el uso de bits (longitud media menor).
+
+---
+
+### 4. Modos de Direccionamiento (MDA)
+
+El MDA es el método para calcular la **Dirección Efectiva (EA)** del operando.
+
+#### Modos Básicos
+
+| Modo | Ejemplo | Cómo calcula la EA | Usos Típicos |
+| :--- | :--- | :--- | :--- |
+| **Inmediato** | `MOV R5, #5` | Operando es el valor `5` | Constantes, inicialización. |
+| **Registro** | `MOV R5, R7` | Operando es el Contenido(R7) | Acceso rápido. |
+| **Absoluto/Directo** | `MOV R5, (1000)` | EA = 1000 (Dirección fija) | Acceso a localizaciones de memoria globales. |
+| **Indirecto de Registro** | `MOV R5, (R3)` | EA = Contenido(R3) | Punteros, estructuras. |
+| **Autoincremento** | `MOV R5, (R3)+` | EA = Contenido(R3), luego R3 se incrementa | Recorrido eficiente de arrays. |
+
+#### Modos Compuestos
+* **Índice / Indizado:** EA = base + índice. Utilizado para acceso a elementos de arrays.
+* **Base-Desplazamiento:** EA = base + offset. Útil en segmentación y código relocalizable.
+* **Relativo (al PC):** Usa desplazamientos respecto al Contador de Programa. Esencial para **saltos** y *loops*.
+
+---
+
+## 💡 Conclusión
+
+El diseño del CI es una decisión fundamental que equilibra el **rendimiento** y la **complejidad** de la Unidad de Control. La elección de codificaciones y modos de direccionamiento determina la **expresividad del lenguaje máquina** y la eficiencia global del sistema.

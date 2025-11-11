@@ -1,0 +1,105 @@
+---
+title: "Unidad 4: Unidad de Ejecución (UE)"
+description: "Análisis del órgano de cálculo del procesador: composición, representación de datos (C2, Exceso a M, IEEE-754), diseño de la ALU, Carry Lookahead, y algoritmos de multiplicación/división."
+tags: ["Arquitectura", "CPU", "Unidad de Ejecución", "ALU", "Aritmética", "Complemento a 2", "CLA"]
+---
+
+# 🧠 Unidad 4: Unidad de Ejecución (UE)
+
+## 📌 Sinopsis y Objetivos
+
+Esta unidad se centra en la **Unidad de Ejecución (UE)**, el órgano de cálculo del procesador. Se abordan su **composición** (ALU, GPR, FPU), las **representaciones de datos** (Complemento a 2, Exceso a M, Punto Flotante), el diseño de la **ALU** (incluyendo el **Carry Lookahead Adder**), y los algoritmos de **multiplicación y división** implementados por hardware.
+
+---
+
+### 🎯 Objetivos de Aprendizaje
+
+- Identificar la función y los componentes clave de la **Unidad de Ejecución**.  
+- Justificar el uso del **Complemento a 2 (C2)** y del **Exceso a M** en la representación numérica.  
+- Comprender la solución **Carry Lookahead (CLA)** al problema del retardo por acarreo.  
+- Analizar los algoritmos de **Multiplicación** (Booth, Wallace) y **División** (SRT).  
+
+---
+
+## 🚀 Desarrollo Temático
+
+### 1. Función y Composición de la UE
+
+La **Unidad de Ejecución (UE)** es el **órgano de cálculo** de la CPU, responsable de ejecutar las instrucciones aritméticas y lógicas.
+
+**Componentes principales:**
+- **ALU** (Unidad Aritmética-Lógica)  
+- **GPR** (Registros de Propósito General)  
+- **FPU** (Unidad de Punto Flotante)  
+- **Registros temporales** (como Y y Z)
+
+**Rol:** realizar operaciones aritméticas, lógicas, de corrimiento y mantener los *flags* de estado (Zero, Sign, Carry, Overflow).
+
+---
+
+### 2. Representación de Datos y Aritmética
+
+La representación de los datos condiciona el diseño de la ALU.  
+El **Complemento a 2 (C2)** es el estándar para números enteros con signo, ya que permite reutilizar el mismo circuito para suma y resta, y además evita el problema del doble cero.
+
+| Técnica de Enteros | Propiedad Clave | Uso Principal |
+| :--- | :--- | :--- |
+| **Signo-Magnitud** | El bit más significativo indica el signo. | Intuitivo, pero aritmética compleja. |
+| **Complemento a 2 (C2)** | Único cero; simplifica suma/resta. | Estándar en ALU. |
+| **Exceso a M (Bias)** | Mantiene el orden binario. | Exponentes en punto flotante (IEEE-754). |
+
+Otras codificaciones:  
+- **BCD (Binary Coded Decimal):** precisión decimal.  
+- **Código Gray:** minimiza errores en transiciones binarias.
+
+---
+
+### 3. Diseño de la ALU y Propagación de Acarreo
+
+#### 🔹 Problema del Sumador Convencional
+
+El **sumador por arrastre de acarreo (ripple-carry adder)** presenta un retardo proporcional al número de bits (`n`), lo que limita la frecuencia del procesador.
+
+#### 🔹 Solución: Carry Lookahead Adder (CLA)
+
+El **CLA** reduce ese retardo al calcular los acarreos en **paralelo**, en lugar de propagarlos secuencialmente.
+
+**Conceptos base:**
+- **Generar:** \( G_i = A_i \times B_i \)
+- **Propagar:** \( P_i = A_i + B_i \)
+
+**Ecuación general del acarreo:**
+
+C(i+1) = G(i) + P(i) × C(i)
+
+
+> Esta expresión se interpreta como:  
+> “el acarreo siguiente es generado directamente o propagado desde el bit anterior”.  
+> Al predecir todos los acarreos simultáneamente, se reduce el retardo de forma drástica.  
+
+---
+
+### 4. Operaciones Complejas por Hardware
+
+#### 🔸 Multiplicación
+Los algoritmos **Booth** y el **Árbol de Wallace** optimizan la multiplicación binaria:
+- Booth reduce el número de sumas parciales.
+- Wallace combina sumas mediante el uso de **Carry Save Adders (CSA)**, acelerando el cálculo total.
+
+#### 🔸 División
+Los algoritmos **SRT (Sweeney–Robertson–Tocher)** permiten realizar divisiones con una estimación sucesiva del cociente.  
+Aunque son más complejos, ofrecen **mayor velocidad** que los métodos *restoring* o *non-restoring*.
+
+---
+
+### 5. Registros y Lógica a Nivel de Bit
+
+Los **Registros de Propósito General (GPR)** están compuestos por **flip-flops tipo D**.  
+Las operaciones de **corrimiento** (lógico o aritmético) y **rotación** se implementan mediante **circuitos de desplazamiento** especializados o **shift registers**.
+
+---
+
+## 💡 Conclusión
+
+La **Unidad de Ejecución** constituye el núcleo operativo de la CPU.  
+Las decisiones sobre **representación numérica (C2)**, manejo del **acarreo (CLA)** y algoritmos de **aritmética compleja** (Booth, SRT) determinan el equilibrio entre **precisión**, **rendimiento** y **complejidad del hardware**.

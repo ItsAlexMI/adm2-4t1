@@ -1,0 +1,222 @@
+---
+title: "Unidad 5: Unidad de Control (UC)"
+description: "La Unidad de Control coordina el ciclo de instrucción del CPU activando las señales que gobiernan registros, buses, memoria, ALU y periféricos. Puede ser de tipo fija (alambrada) o microprogramada, y define la secuencia temporal de pasos para ejecutar instrucciones."
+tags: ["Arquitectura", "CPU", "Unidad de Control", "Microprogramación", "FSM", "Ciclo de Instrucción", "Datapath"]
+---
+
+# ⚙️ Unidad 5: Unidad de Control (UC)
+
+## 📌 Sinopsis
+
+La **Unidad de Control (UC)** coordina y orquesta el ciclo de instrucción del procesador, generando las señales de control que dirigen registros, buses, memoria, ALU y periféricos.  
+Puede implementarse mediante **lógica fija (control alambrado o FSM)** o con **microprogramación** (memoria de control con palabras de control).  
+
+La UC define las **secuencias de pasos de control (T1, T2, …)** para cada instrucción, manejando el **contador de programa (PC)**, accesos a memoria, interrupciones y banderas (*flags*/PSW).  
+En esencia, es el **“director de orquesta”** que traduce cada instrucción en señales temporizadas que hacen funcionar el *datapath*.
+
+---
+
+## 🎯 Objetivos de Aprendizaje
+
+- Explicar la **función** de la UC en el ciclo de instrucción.  
+- Describir las **operaciones básicas de control**: transferencias de registros, acceso a memoria, ejecución ALU, manejo del PC y flags, verificación de interrupciones.  
+- Diferenciar las implementaciones de **UC fija (alambrada)** y **UC microprogramada**, con sus ventajas y desventajas.  
+- Elaborar la **secuencia de pasos de control (micro pasos)** para instrucciones representativas (`ADD`, `MOV`, `BRx`).  
+- Comprender cómo la UC **gestiona señales de control**, **sincroniza ciclos de memoria (MFC/WMFC)** y realiza **microrramificaciones** en microprogramación.  
+
+---
+
+## 🚀 Desarrollo Temático
+
+### 1. Papel de la Unidad de Control
+
+La UC convierte la **instrucción actual (IR)** y el **estado del sistema** (Tj, flags, interrupciones, etc.) en un conjunto de **señales de control temporizadas**.  
+Estas señales activan operaciones como:
+
+- Lectura/escritura de memoria  
+- Habilitación de registros al bus  
+- Selección de MUX  
+- Operaciones ALU  
+- Actualización del PSW  
+
+> 💡 *Metáfora:* la UC es el **titiritero** que “hala las cuerdas” del procesador en el momento preciso.
+
+---
+
+### 2. Ciclo de Instrucción y Operaciones Controladas
+
+**Ciclo estándar:**
+
+FETCH → EXECUTE → INTERRUPT CHECK → NEXT
+
+
+**Ejemplo detallado:**
+1. **FETCH:**  
+   - PC → MAR  
+   - READ  
+   - PC ← PC + 1  
+   - MDR → IR  
+   - Decodificación  
+
+2. **EXECUTE:**  
+   - Traer operandos (SOURCE, Y)  
+   - ALU → Z  
+   - Resultado → registro destino o memoria  
+
+3. **Chequeo de interrupciones:**  
+   - Verificar señales externas antes del siguiente ciclo.  
+
+**Operaciones típicas controladas por la UC:**
+- Transferencias de registros  
+- Lecturas/escrituras de memoria  
+- Ejecución de ALU  
+- Modificación del PC  
+- Verificación de interrupciones  
+- Manipulación de flags/PSW  
+- Limpieza o configuración de bits auxiliares  
+
+---
+
+### 3. Control de Registros y Buses
+
+Cada salida de registro se **aísla del bus** mediante **buffers de tres estados**.  
+La UC genera las señales:
+
+- **Rx_out** → habilita la salida de un registro  
+- **Rx_in** → permite la carga en otro registro  
+
+**Secuencia típica de transferencia:**
+
+Fuente → Bus → Destino
+
+Ambas acciones ocurren dentro de un mismo pulso de reloj controlado por la UC.
+
+---
+
+### 4. Control de Memoria y Sincronización
+
+**Lectura:**
+
+MAR ← dirección
+READ
+Esperar MFC
+MDR ← Bus
+
+
+**Escritura:**
+
+MAR ← dirección
+MDR ← dato
+WRITE
+Esperar confirmación
+
+
+Las señales **MFC/WMFC (Memory Function Complete / Wait for MFC)** aseguran la sincronización del ciclo de memoria.  
+Si la memoria tarda, el **secuenciador de la UC** debe pausar mediante polling o una señal de inhibición.
+
+---
+
+### 5. Manejo del Contador de Programa (PC)
+
+**Incremento:**
+
+PC ← PC + k
+
+(k = tamaño de instrucción en palabras).  
+Puede implementarse mediante la ALU o un sumador dedicado.
+
+**Modificación (saltos):**
+- **Absoluto:** `PC ← d`  
+- **Relativo:** `PC ← PC + d`  
+En saltos condicionales (`BRx`), la UC **verifica flags** antes de modificar el PC.
+
+---
+
+### 6. Banderas y Estado (PSW)
+
+La UC lee y actualiza las **banderas de estado**:
+- **Z (Zero)**  
+- **S/N (Sign/Negative)**  
+- **C (Carry)**  
+- **V (Overflow)**  
+
+Estas banderas condicionan **saltos**, **microdecisiones** o **microrramificaciones** dentro de la UC microprogramada.
+
+---
+
+### 7. Estrategias de Ejecución según Tipo de Instrucción
+
+| Tipo de Instrucción | Secuencia de Ejecución |
+| :--- | :--- |
+| **OP (ADD, AND, …)** | Fetch → SOURCE ← op1 → Y ← op2 → ALU → Z → destino → actualizar flags |
+| **MOV** | Fetch → SOURCE ← operando → calcular EA → mover SOURCE → destino o memoria |
+| **BRx** | Fetch → comprobar condición → si procede: Z ← PC + desplazamiento → PC ← Z |
+| **PUSH / POP** | Manipular SP con auto-incremento/decremento; transferir MDR ↔ memoria |
+
+---
+
+### 8. Desarrollo en Pasos de Control (Micro Pasos)
+
+Un **paso de control (Tj)** agrupa las señales activas en un solo ciclo de reloj.  
+Cada instrucción (`Ii`) se compone de una **secuencia T1..Tn**, que representan la “receta” de ejecución que implementa la UC.
+
+---
+
+### 9. Implementación: UC Fija vs UC Microprogramada
+
+| Aspecto | UC Fija (Hardwired) | UC Microprogramada |
+| :--- | :--- | :--- |
+| **Estructura** | Lógica combinacional y FSM | Memoria de control + microPC |
+| **Velocidad** | Alta | Media / baja |
+| **Flexibilidad** | Muy limitada | Alta, fácil de modificar |
+| **Complejidad** | Elevada en diseños grandes | Depende del tamaño del microprograma |
+| **Uso típico** | CPUs RISC, controladores rápidos | CPUs CISC, arquitecturas complejas |
+
+**Notas:**
+- La UC fija se implementa con **PLAs o lógica VLSI**.  
+- La microprogramada usa **palabras de control (cw)** almacenadas en una memoria interna, secuenciadas por un **microPC (mPC)**.  
+- Las **microrramificaciones (mBr)** permiten saltar dentro del microprograma según condiciones o modos de direccionamiento.
+
+**Codificación:**
+- **Horizontal:** un bit por señal → mayor ancho, ejecución rápida.  
+- **Vertical:** señales codificadas → menor ancho, requiere decodificación.  
+- **Híbrido:** mezcla de ambos enfoques.
+
+---
+
+### 10. Microrramificaciones y Manejo de Modos
+
+Para instrucciones con **modos de direccionamiento variables**, como:
+
+ADD R1, R2
+ADD (R1)+, 1000(R2)
+
+la UC usa **microrramificaciones** que redirigen el flujo del microprograma según los bits de modo o los flags, evitando duplicar código de control.
+
+---
+
+## 📘 Conceptos y Definiciones Clave
+
+| Término | Definición |
+| :--- | :--- |
+| **Unidad de Control (UC)** | Genera señales de control para dirigir el datapath. |
+| **Paso de Control (Tj)** | Intervalo de reloj con un conjunto definido de señales activas. |
+| **Palabra de Control (cw)** | Representación binaria de las señales activas en microprogramación. |
+| **microPC (mPC)** | Contador interno que secuencia las palabras de control. |
+| **MFC / WMFC** | Señales de completamiento de ciclos de memoria. |
+| **PLA** | Arreglo de lógica programable usado en UC fija. |
+| **Horizontal / Vertical** | Tipos de organización de memoria de control. |
+| **Microrramificación (mBr)** | Desvío del microPC para manejar modos o condiciones. |
+
+---
+
+## 💡 Conclusión
+
+La **Unidad de Control** traduce la semántica de las instrucciones en **acciones físicas** dentro del hardware.  
+Su diseño determina el equilibrio entre **velocidad, flexibilidad y complejidad** del sistema.
+
+El enfoque (alambrado vs microprogramado) y la organización de la memoria de control (horizontal/vertical) son decisiones clave que impactan en la **capacidad de extensión** y **mantenimiento** de la arquitectura.  
+
+Un diseño sólido define claramente los **micro pasos**, sincroniza los **ciclos de memoria**, y prevé **microrramificaciones** para manejar modos e interrupciones sin redundancia.
+
+> 🧭 En la web, se recomienda presentar primero la **función general y el ciclo de instrucción**, luego la **comparación de implementaciones**, y finalmente **ejemplos de micro pasos y diagramas de señales** para visualizar cómo la UC “hila” todo el funcionamiento del CPU.

@@ -1,0 +1,132 @@
+---
+title: "Unidad 6: Sistema de Memoria"
+description: "Jerarquía, tipos, tecnologías y diseño del subsistema de memoria en un sistema computacional."
+---
+
+# Unidad 6: Sistema de Memoria
+
+## Breve sinopsis
+Esta unidad presenta la **función de almacenamiento** en el sistema computacional, las **métricas y prestaciones** de memoria (latencia, capacidad), la **jerarquía de memoria** (registros, caché, memoria principal, secundaria), las **características físicas y lógicas** (tecnología, volatilidad, métodos de acceso), la **organización interna de chips y módulos**, el **funcionamiento de DRAM (refresco)**, el **diseño y operación de cachés**, y los **criterios de diseño** que equilibran rendimiento y coste.  
+Ofrece los fundamentos conceptuales y prácticos necesarios para **diseñar y evaluar subsistemas de memoria.**
+
+---
+
+## 🎯 Objetivos de aprendizaje
+
+- Comprender las funciones básicas del almacenamiento (registros, memoria principal, memoria secundaria) y sus roles en la ejecución del programa.  
+- Definir y comparar métricas clave: **latencia, ciclo, capacidad** y **unidad de transferencia**.  
+- Explicar la **jerarquía de memoria** y cómo los **trade-offs** entre tiempo y coste justifican cachés y memorias intermedias.  
+- Describir **tecnologías de memoria** (SRAM, DRAM, magnética, óptica, Flash) y su clasificación por **retención**.  
+- Analizar la **organización interna de chips y módulos**, multiplexado de direcciones y la necesidad de **refresco en DRAM**.  
+- Diseñar y evaluar una **caché**, considerando tamaño, correspondencia, políticas y principio de localidad.  
+- Determinar políticas adecuadas según **carga de trabajo** y **restricciones de hardware**.
+
+---
+
+## 🧠 Desarrollo temático
+
+### 1. Función de almacenamiento y prestaciones
+- **Roles:** registros del CPU (rápidos y temporales), memoria principal (datos y programas activos) y memoria secundaria (persistente y masiva).  
+- **Operaciones:** lectura y escritura.  
+- **Métricas:** latencia de acceso, ciclo de memoria y capacidad (KB, MB, GB, TB).  
+- **Diseño:** equilibrio entre latencia, ancho de banda y coste por bit.
+
+---
+
+### 2. Jerarquía de memoria y principio de diseño
+- Jerarquía típica: **Registros → Caché → RAM → Disco/SSD**.  
+- A mayor proximidad al CPU, **menor latencia y mayor coste por bit**.  
+- Se aprovecha la **localidad temporal y espacial** para mejorar el rendimiento.
+
+---
+
+### 3. Clasificaciones y tecnologías
+- **Por función:** interna (CPU), caché, principal, secundaria.  
+- **Por tecnología:** SRAM (rápida), DRAM (barata), magnética, óptica, Flash.  
+- **Por retención:** volátil vs no volátil.  
+- **Por operación:** RAM, ROM, PROM, EEPROM, Flash.  
+
+---
+
+### 4. Métodos de acceso y organización física
+- **Acceso aleatorio (RAM):** tiempo uniforme.  
+- **Acceso secuencial (cinta):** latencia dependiente.  
+- **Acceso directo (disco):** posicionamiento + búsqueda.  
+- **Memorias asociativas (CAM):** búsqueda por contenido.  
+- **Organización interna:** matrices filas×columnas, direcciones multiplexadas.  
+- **DRAM:** necesita **refresco periódico**, reduciendo rendimiento efectivo.
+
+---
+
+### 5. Unidad de transferencia y direccionabilidad
+- Determinada por **ancho del bus de datos**.  
+- Entre niveles de jerarquía se transfieren **bloques**.  
+- Unidad direccionable: **byte o palabra**, según la arquitectura.
+
+---
+
+### 6. Caché: operación y diseño
+- Reduce la **latencia percibida** almacenando copias de bloques.  
+- **Hit:** acierto → dato servido desde caché.  
+- **Miss:** fallo → traer bloque desde RAM.  
+- **Principio de localidad:** base de la eficacia.  
+- **Diseño:** tamaño, tamaño de bloque, correspondencia, política de sustitución y escritura.  
+- **Correspondencia directa:** simple pero propensa a conflictos.  
+- **Asociativa total:** flexible pero costosa.  
+- **Asociativa por conjuntos:** equilibrio práctico (2-way, 4-way).
+
+---
+
+### 7. Direcciones y campos (ejemplo)
+Ejemplo:  
+Caché de 16 KB con bloques de 4 B →  
+14 bits línea, 2 bits offset, 8 bits etiqueta en espacio de 24 bits.  
+Búsqueda: indexar conjunto y comparar etiquetas para confirmar acierto.
+
+---
+
+### 8. Sustitución y coherencia
+- **Algoritmos de reemplazo:** LRU, FIFO, LFU, aleatorio.  
+- **Políticas de escritura:**  
+  - *Write through:* coherencia simple, más tráfico.  
+  - *Write back:* menos tráfico, pero requiere bits *dirty* y protocolos de coherencia (MESI, MSI).  
+- **Coherencia:** mantiene consistencia entre múltiples CPUs y memorias caché.
+
+---
+
+### 9. Ejemplos de diseño y *trade-offs*
+- **Ejemplo:** caché de 64 KB con bloques de 4 B → 16 K líneas.  
+- **Trade-offs:**  
+  - Bloques grandes: mejor localidad espacial, peor *miss penalty*.  
+  - Alta asociatividad: menos *misses*, más coste.  
+  - *Write back:* menos tráfico, más complejidad.
+
+---
+
+## 🧩 Conceptos y definiciones clave
+
+| Concepto | Definición |
+|-----------|------------|
+| **Latencia de acceso** | Tiempo desde la solicitud hasta disponibilidad del dato. |
+| **Ciclo de memoria** | Tiempo mínimo entre accesos sucesivos. |
+| **Unidad de transferencia** | Datos transferidos por operación. |
+| **Localidad temporal** | Reuso próximo de la misma dirección. |
+| **Localidad espacial** | Acceso a direcciones contiguas. |
+| **Hit / Miss** | Acierto o fallo en caché. |
+| **Tag (etiqueta)** | Parte de la dirección usada para verificar correspondencia. |
+| **Write through / Write back** | Políticas de escritura de caché. |
+| **DRAM refresh** | Operación periódica para mantener cargas eléctricas. |
+| **Memoria asociativa (CAM)** | Búsqueda por contenido. |
+| **Set associative** | Caché dividida en conjuntos con varias líneas. |
+
+---
+
+## 🧭 Conclusión
+El **subsistema de memoria** determina gran parte del rendimiento real del computador.  
+Aunque la CPU sea potente, la latencia y el ancho de banda efectivos dependen de un diseño equilibrado.  
+El desafío es **optimizar velocidad, capacidad y coste** mediante una jerarquía adecuada, caché eficiente y políticas de escritura coherentes.  
+
+En una aplicación educativa, se recomienda mostrar **ejemplos numéricos**, **diagramas de mapeo de caché** y **comparativas tecnológicas** que ayuden al estudiante a visualizar cómo cada decisión afecta el rendimiento global del sistema.
+
+---
+
